@@ -38,7 +38,6 @@ import org.flowable.variable.service.VariableServiceConfiguration;
 import org.flowable.variable.service.event.impl.FlowableVariableEventBuilder;
 import org.flowable.variable.service.impl.aggregation.VariableAggregationInfo;
 import org.flowable.variable.service.impl.util.CommandContextUtil;
-import org.flowable.variable.service.impl.util.VariableAggregationUtil;
 import org.flowable.variable.service.impl.util.VariableLoggingSessionUtil;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -680,7 +679,7 @@ public abstract class VariableScopeImpl extends AbstractEntity implements Serial
             }
 
             // If the variable exists on this scope, replace it
-            if (hasVariableLocal(variableName)) {
+            if (storeVariableLocal(variableName)) {
                 setVariableLocal(variableName, value, true);
                 return;
             }
@@ -911,8 +910,6 @@ public abstract class VariableScopeImpl extends AbstractEntity implements Serial
             variableInstances.put(variableName, variableInstance);
         }
 
-        handleVariableAggregations(variableInstance);
-
         if (isPropagateToHistoricVariable()) {
             if (variableServiceConfiguration.getInternalHistoryVariableManager() != null) {
                 variableServiceConfiguration.getInternalHistoryVariableManager()
@@ -935,13 +932,8 @@ public abstract class VariableScopeImpl extends AbstractEntity implements Serial
         return variableInstance;
     }
 
-    protected void handleVariableAggregations(VariableInstance variableInstance) {
-        VariableAggregationInfo variableAggregationInfo = getVariableAggregationInfo();
-        if (variableAggregationInfo == null) {
-            return;
-        }
-
-        VariableAggregationUtil.copyCreatedVariableForAggregation(variableAggregationInfo, variableInstance);
+    protected boolean storeVariableLocal(String variableName) {
+        return hasVariableLocal(variableName);
     }
 
     public abstract VariableAggregationInfo getVariableAggregationInfo();
@@ -965,7 +957,6 @@ public abstract class VariableScopeImpl extends AbstractEntity implements Serial
         TransientVariableInstance transientVariableInstance = new TransientVariableInstance(variableName, variableValue);
         transientVariables.put(variableName, transientVariableInstance);
 
-        handleVariableAggregations(transientVariableInstance);
     }
 
     @Override

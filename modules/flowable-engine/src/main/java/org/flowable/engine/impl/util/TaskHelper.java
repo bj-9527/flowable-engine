@@ -175,7 +175,7 @@ public class TaskHelper {
                         Expression expression = expressionManager.createExpression(assigneeVariableName);
 
                         // TODO: needs to be configurable local/instance and transient/non-transient
-                        taskEntity.setVariableLocal(expression.getValue(taskEntity).toString(), assignee);
+                        taskEntity.setVariable(expression.getValue(taskEntity).toString(), assignee);
                     }
                 }
             }
@@ -204,7 +204,7 @@ public class TaskHelper {
                         Expression expression = expressionManager.createExpression(ownerVariableName);
 
                         // TODO: needs to be configurable local/instance and transient/non-transient
-                        taskEntity.setVariableLocal(expression.getValue(taskEntity).toString(), owner);
+                        taskEntity.setVariable(expression.getValue(taskEntity).toString(), owner);
                     }
                 }
             }
